@@ -1,0 +1,50 @@
+{
+  "title": "Solakon Cloud (Prototype)",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Solakon Cloud",
+        "description": "Enter the email address used by the Solakon app. Solakon will send a six-digit confirmation code.",
+        "data": {"email": "Email address"}
+      },
+      "otp": {
+        "title": "Confirm Solakon login",
+        "description": "Enter the six-digit code sent to {email}.",
+        "data": {"code": "Confirmation code"}
+      },
+      "reauth_confirm": {
+        "title": "Reconnect Solakon Cloud",
+        "description": "Send a new confirmation code to {email}.",
+        "data": {}
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to reach Solakon.",
+      "invalid_auth": "Solakon rejected the login request.",
+      "invalid_otp": "The confirmation code is invalid or expired.",
+      "no_devices": "The account did not return an inverter."
+    },
+    "abort": {
+      "already_configured": "This Solakon account is already configured.",
+      "reauth_successful": "Solakon Cloud was reconnected successfully.",
+      "unknown": "The setup flow expired; please start again."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "current_power": {"name": "Current production"},
+      "energy_today": {"name": "Energy today"},
+      "energy_total": {"name": "Lifetime energy"},
+      "temperature": {"name": "Temperature"},
+      "ac_voltage": {"name": "AC voltage"},
+      "ac_current": {"name": "AC current"},
+      "ac_power": {"name": "AC power"},
+      "ac_frequency": {"name": "AC frequency"},
+      "wifi_signal": {"name": "Wi-Fi signal"},
+      "last_update": {"name": "Last update"}
+    },
+    "binary_sensor": {"online": {"name": "Connectivity"}},
+    "number": {"maximum_power": {"name": "Maximum output power"}},
+    "switch": {"b2500_mode": {"name": "B2500 operating mode"}}
+  }
+}

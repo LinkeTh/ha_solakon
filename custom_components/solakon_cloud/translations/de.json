@@ -1,0 +1,50 @@
+{
+  "title": "Solakon Cloud (Prototyp)",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Mit Solakon Cloud verbinden",
+        "description": "Gib die E-Mail-Adresse der Solakon App ein. Solakon sendet anschließend einen sechsstelligen Bestätigungscode.",
+        "data": {"email": "E-Mail-Adresse"}
+      },
+      "otp": {
+        "title": "Solakon-Anmeldung bestätigen",
+        "description": "Gib den sechsstelligen Code ein, der an {email} gesendet wurde.",
+        "data": {"code": "Bestätigungscode"}
+      },
+      "reauth_confirm": {
+        "title": "Solakon Cloud neu verbinden",
+        "description": "Einen neuen Bestätigungscode an {email} senden.",
+        "data": {}
+      }
+    },
+    "error": {
+      "cannot_connect": "Solakon ist derzeit nicht erreichbar.",
+      "invalid_auth": "Solakon hat die Anmeldeanfrage abgelehnt.",
+      "invalid_otp": "Der Bestätigungscode ist ungültig oder abgelaufen.",
+      "no_devices": "Das Konto hat keinen Wechselrichter zurückgegeben."
+    },
+    "abort": {
+      "already_configured": "Dieses Solakon-Konto ist bereits eingerichtet.",
+      "reauth_successful": "Solakon Cloud wurde erfolgreich neu verbunden.",
+      "unknown": "Der Einrichtungsdialog ist abgelaufen. Bitte erneut starten."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "current_power": {"name": "Aktuelle Erzeugung"},
+      "energy_today": {"name": "Energie heute"},
+      "energy_total": {"name": "Gesamtertrag"},
+      "temperature": {"name": "Temperatur"},
+      "ac_voltage": {"name": "AC-Spannung"},
+      "ac_current": {"name": "AC-Strom"},
+      "ac_power": {"name": "AC-Leistung"},
+      "ac_frequency": {"name": "AC-Frequenz"},
+      "wifi_signal": {"name": "WLAN-Signal"},
+      "last_update": {"name": "Letzte Aktualisierung"}
+    },
+    "binary_sensor": {"online": {"name": "Verbindung"}},
+    "number": {"maximum_power": {"name": "Maximale Ausgangsleistung"}},
+    "switch": {"b2500_mode": {"name": "B2500-Betriebsmodus"}}
+  }
+}

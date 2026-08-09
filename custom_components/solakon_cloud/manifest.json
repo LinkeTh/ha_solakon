@@ -1,0 +1,13 @@
+{
+  "domain": "solakon_cloud",
+  "name": "Solakon Cloud (Prototype)",
+  "after_dependencies": [],
+  "codeowners": ["@LinkeTh"],
+  "config_flow": true,
+  "documentation": "https://github.com/LinkeTh/ha_solakon",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/LinkeTh/ha_solakon/issues",
+  "requirements": [],
+  "version": "0.1.1"
+}
