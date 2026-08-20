@@ -78,6 +78,18 @@ class SolakonCloudCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         device_id = metadata["deviceId"]
         aggregated = await self.client.async_get_aggregated(device_id)
 
+        # Debug Logging: rohen API-Wert protokollieren, bevor die
+        # Bereinigung greift, damit man beide Zustände vergleichen kann.
+        _LOGGER.debug(
+            "Solakon raw realtimeData for %s: today=%s totalLifetime=%s timestamp=%s",
+            device_id,
+            aggregated.get("realtimeData", {}).get("today"),
+            aggregated.get("realtimeData", {}).get("totalLifetime"),
+            aggregated.get("realtimeData", {}).get("timestamp"),
+        )
+
+        aggregated = self._sanitize_today(device_id, aggregated)
+
         maximum_power, mode = await asyncio.gather(
             self.client.async_get_maximum_power(device_id),
             self._async_optional_mode(device_id, aggregated),
@@ -88,6 +100,56 @@ class SolakonCloudCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "maximum_power": maximum_power,
             "mode": mode,
         }
+
+    def _sanitize_today(
+        self, device_id: str, aggregated: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Guard against a bogus 'today' value on the first poll after a reconnect."""
+        realtime = aggregated.get("realtimeData")
+        if not isinstance(realtime, dict):
+            return aggregated
+
+        today = realtime.get("today")
+        total = realtime.get("totalLifetime")
+        if today is None or total is None:
+            return aggregated
+
+        try:
+            today_f, total_f = float(today), float(total)
+        except (TypeError, ValueError):
+            return aggregated
+
+        previous_devices = (self.data or {}).get("devices", {})
+        previous_today = None
+        if device_id in previous_devices:
+            prev_realtime = previous_devices[device_id]["aggregated"].get(
+                "realtimeData", {}
+            )
+            try:
+                previous_today = float(prev_realtime.get("today"))
+            except (TypeError, ValueError):
+                previous_today = None
+
+        is_suspicious = total_f > 0 and abs(today_f - total_f) < max(
+            0.05, total_f * 0.01
+        )
+
+        if is_suspicious and (previous_today is None or today_f > previous_today + 5):
+            _LOGGER.warning(
+                "Solakon %s: verworfener Ausreißer bei energy_today (%.3f kWh "
+                "≈ energy_total %.3f kWh) – wahrscheinlich stale API-Antwort "
+                "nach Reconnect. Verwende vorherigen Wert (%s).",
+                device_id,
+                today_f,
+                total_f,
+                previous_today,
+            )
+            realtime = dict(realtime)
+            realtime["today"] = previous_today if previous_today is not None else 0.0
+            aggregated = dict(aggregated)
+            aggregated["realtimeData"] = realtime
+
+        return aggregated
 
     async def _async_optional_mode(
         self, device_id: str, aggregated: dict[str, Any]
