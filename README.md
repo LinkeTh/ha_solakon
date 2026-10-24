@@ -26,8 +26,9 @@ It was developed and tested with a **Solakon onLite** system using the
 - Maximum-output control only when Solakon returns its current value
 
 Entities for values that the API returns as `null` are intentionally not created.
-For the tested MI800, temperature and AC current were unavailable. Solakon also
-returned `404 no-data` for maximum power, so that control was withheld.
+For the tested MI800, temperature and AC current were unavailable. Maximum-power
+and operating-mode controls are withheld when their optional API endpoint is
+unsupported or temporarily returns a server error; telemetry continues loading.
 
 ## Installation with HACS
 
@@ -59,7 +60,8 @@ Assistant's config-entry storage. It does not request or store a password.
 - Solakon normally refreshes inverter data every five minutes.
 - The private API has no compatibility guarantee.
 - Grid-connection blocking is not exposed.
-- Maximum-output control is hidden when Solakon returns no current value.
+- Optional controls are hidden when Solakon returns no current value or their
+  endpoint is temporarily unavailable.
 - Adding a newly registered inverter may require reloading the integration.
 
 ## Removal

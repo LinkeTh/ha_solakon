@@ -48,6 +48,13 @@ class SolakonApiError(SolakonError):
         self.status = status
 
 
+def _optional_control_unavailable(err: SolakonApiError) -> bool:
+    """Return whether an optional control endpoint can be omitted safely."""
+    return err.status in (400, 403, 404) or (
+        err.status is not None and 500 <= err.status < 600
+    )
+
+
 @dataclass(slots=True)
 class SolakonTokens:
     """Renewable Solakon session."""
@@ -292,7 +299,7 @@ class SolakonApiClient:
         try:
             payload = await self.async_get(f"/v1/inverter/{device_id}/maximum-power")
         except SolakonApiError as err:
-            if err.status in (400, 403, 404):
+            if _optional_control_unavailable(err):
                 return None
             raise
         return payload if isinstance(payload, dict) else None
@@ -306,7 +313,7 @@ class SolakonApiClient:
         try:
             payload = await self.async_get(f"/v1/inverter/{device_id}/mode")
         except SolakonApiError as err:
-            if err.status in (400, 403, 404):
+            if _optional_control_unavailable(err):
                 return None
             raise
         return payload if isinstance(payload, dict) else None
